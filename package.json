@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "concurrently \"node app.js\" \"node admin.js\"",
+  "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +17,8 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.14.0",
     "playht": "^0.17.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
