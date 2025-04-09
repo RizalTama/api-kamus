@@ -1,63 +1,41 @@
-// Hitung array LPS (Longest Prefix Suffix)
-function computeLPSArray(pattern) {
-    const lps = Array(pattern.length).fill(0);
-    let len = 0;
-    let i = 1;
-  
-    while (i < pattern.length) {
-      if (pattern[i] === pattern[len]) {
-        len++;
-        lps[i++] = len;
-      } else {
-        if (len !== 0) {
-          len = lps[len - 1];
-        } else {
-          lps[i++] = 0;
-        }
-      }
+function computeLPSArray(p) {
+  const lps = new Uint16Array(p.length); // Lebih ringan dari Array biasa
+  let len = 0, i = 1;
+  while (i < p.length) {
+    if (p[i] === p[len]) {
+      lps[i++] = ++len;
+    } else {
+      len ? len = lps[len - 1] : i++;
     }
-    return lps;
   }
-  
-  // Fungsi utama KMP
-  function KMPSearch(pattern, text, options = { caseSensitive: true }) {
-    if (!pattern || !text) return [];
-  
-    // Early return jika pattern lebih panjang dari teks
-    if (pattern.length > text.length) return [];
-  
-    // Case insensitive opsional
-    if (!options.caseSensitive) {
-      pattern = pattern.toLowerCase();
-      text = text.toLowerCase();
-    }
-  
-    const lps = computeLPSArray(pattern);
-    const result = [];
-    const m = pattern.length;
-    const n = text.length;
-    let i = 0, j = 0;
-  
-    while (i < n) {
-      if (pattern[j] === text[i]) {
-        i++;
-        j++;
-      }
-  
-      if (j === m) {
-        result.push(i - j); // Pattern ditemukan
-        j = lps[j - 1];
-      } else if (i < n && pattern[j] !== text[i]) {
-        if (j !== 0) {
-          j = lps[j - 1];
-        } else {
-          i++;
-        }
-      }
-    }
-  
-    return result;
+  return lps;
+}
+
+function KMPSearch(pattern, text, options = { caseSensitive: true }) {
+  if (!pattern || !text || pattern.length > text.length) return [];
+
+  if (!options.caseSensitive) {
+    pattern = pattern.toLowerCase();
+    text = text.toLowerCase();
   }
-  
-  module.exports = { KMPSearch };
-  
+
+  const lps = computeLPSArray(pattern);
+  const res = [];
+  let i = 0, j = 0;
+
+  while (i < text.length) {
+    if (pattern[j] === text[i]) {
+      i++; j++;
+    }
+    if (j === pattern.length) {
+      res.push(i - j);
+      j = lps[j - 1];
+    } else if (i < text.length && pattern[j] !== text[i]) {
+      j ? j = lps[j - 1] : i++;
+    }
+  }
+
+  return res;
+}
+
+module.exports = { KMPSearch };
