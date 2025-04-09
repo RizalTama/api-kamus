@@ -41,6 +41,7 @@ app.get('/dashboard', (req, res) => {
   res.send(`Halo ${req.session.user.username}, selamat datang di dashboard!`);
 });
 
+
 // Endpoint untuk menampilkan data terms dengan paginasi
 app.get('/terms', (req, res) => {
   // Ambil parameter page dan limit dari query string, dengan nilai default
@@ -76,6 +77,18 @@ app.get('/terms', (req, res) => {
     });
   });
 });
+
+// Endpoint untuk menampilkan semua data terms
+app.get('/terms/all', (req, res) => {
+  const sql = 'SELECT * FROM terms';
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
 
 
 // ✅ POST /history → Tambah riwayat pencarian
