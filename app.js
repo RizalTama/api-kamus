@@ -46,7 +46,7 @@ app.get('/dashboard', (req, res) => {
 app.get('/terms', (req, res) => {
   // Ambil parameter page dan limit dari query string, dengan nilai default
   const page = parseInt(req.query.page) || 1; // Halaman default adalah 1
-  const limit = parseInt(req.query.limit) || 100; // Jumlah data per halaman default adalah 20
+  const limit = parseInt(req.query.limit) || 2000; // Jumlah data per halaman default adalah 20
 
   // Hitung offset berdasarkan page dan limit
   const offset = (page - 1) * limit;
