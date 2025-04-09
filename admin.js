@@ -150,11 +150,11 @@ app.get('/search', (req, res) => {
     if (results.length === 0) {
       return res.status(404).json({ message: 'Tidak ada data ditemukan' });
     }
-
+ 
     const filtered = results.filter(term => {
       return KMPSearch(keyword.toLowerCase(), term.term.toLowerCase()).length > 0;
     });
-
+  
     res.json(filtered);
   });
 });
