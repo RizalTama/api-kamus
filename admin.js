@@ -65,6 +65,17 @@ app.get('/terms', (req, res) => {
   });
 });
 
+// Endpoint untuk menampilkan semua data terms
+app.get('/terms/all', (req, res) => {
+  const sql = 'SELECT * FROM terms';
+  db.query(sql, (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    res.json(results);
+  });
+});
+
 // ✅ POST terms (admin only)
 app.post('/terms', (req, res) => {
   let terms = req.body;
