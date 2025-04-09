@@ -111,7 +111,6 @@ app.post('/terms', (req, res) => {
   });
 });
 
-
 // ✅ GET term by ID
 app.get('/terms/:id', (req, res) => {
   const termId = req.params.id;
@@ -130,6 +129,59 @@ app.get('/terms/:id', (req, res) => {
     res.json(result[0]);
   });
 });
+// ✅ UPDATE terms (admin only)
+app.put('/terms/:id', (req, res) => {
+  if (!req.session.admin || !req.session.admin.admin_id) {
+    return res.status(401).json({ error: 'Anda harus login sebagai admin terlebih dahulu' });
+  }
+
+  const { id } = req.params;
+  const { term, definition, audio_file } = req.body;
+
+  if (!term || !definition) {
+    return res.status(400).json({ error: 'Field term dan definition wajib diisi' });
+  }
+
+  const sql = `
+    UPDATE terms
+    SET term = ?, definition = ?, audio_file = ?
+    WHERE term_id = ?
+  `;
+
+  db.query(sql, [term, definition, audio_file || null, id], (err, result) => {
+    if (err) {
+      console.error('Update error:', err);
+      return res.status(500).json({ error: 'Gagal mengupdate data' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Term tidak ditemukan' });
+    }
+    res.json({ message: 'Berhasil mengupdate data' });
+  });
+});
+
+// ✅ DELETE terms (admin only)
+app.delete('/terms/:id', (req, res) => {
+  if (!req.session.admin || !req.session.admin.admin_id) {
+    return res.status(401).json({ error: 'Anda harus login sebagai admin terlebih dahulu' });
+  }
+
+  const { id } = req.params;
+
+  const sql = `DELETE FROM terms WHERE term_id = ?`;
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error('Delete error:', err);
+      return res.status(500).json({ error: 'Gagal menghapus data' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Term tidak ditemukan' });
+    }
+    res.json({ message: 'Berhasil menghapus data' });
+  });
+});
+
 
 // ✅ Search with KMP (pastikan fungsi KMP sudah tersedia di file ini atau di-include)
 app.get('/search', (req, res) => {
