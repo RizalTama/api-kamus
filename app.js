@@ -136,7 +136,6 @@ app.get('/history', (req, res) => {
       console.error('Get history error:', err);
       return res.status(500).json({ error: 'Gagal mengambil data riwayat' });
     }
-
     res.json(results);
   });
 });
@@ -155,7 +154,6 @@ app.delete('/history/delete/:id', (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Riwayat tidak ditemukan' });
     }
-
     res.json({ message: `Riwayat dengan ID ${historyId} berhasil dihapus` });
   });
 });
@@ -165,31 +163,33 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.get('/search', (req, res) => {
-    const keyword = req.query.keyword;
+  app.get('/search', (req, res) => {
+      const keyword = req.query.keyword;
 
-    if (!keyword) {
-        return res.status(400).json({ error: 'Keyword tidak boleh kosong' });
-    }
+      if (!keyword) {
+          return res.status(400).json({ error: 'Keyword tidak boleh kosong' });
+      }
 
-    const sql = `SELECT * FROM terms`;
+      const sql = `SELECT * FROM terms`;
 
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('Search error:', err);
-            return res.status(500).json({ error: 'Gagal melakukan pencarian' });
-        }
-        if (results.length === 0) {
-            return res.status(404).json({ message: 'Tidak ada data ditemukan' });
-        }
-        // Gunakan KMP untuk memfilter hasil
-        const filtered = results.filter(term => {
-            return KMPSearch(keyword.toLowerCase(), term.term.toLowerCase()).length > 0;
-        });
+      db.query(sql, (err, results) => {
+          if (err) {
+              console.error('Search error:', err);
+              return res.status(500).json({ error: 'Gagal melakukan pencarian' });
+          }
+          if (results.length === 0) {
+              return res.status(404).json({ message: 'Tidak ada data ditemukan' });
+          }
+          // Gunakan KMP untuk memfilter hasil
+          const filtered = results.filter(term => {
+              return KMPSearch(keyword.toLowerCase(), term.term.toLowerCase()).length > 0;
+          });
 
-        res.json(filtered);
-    });
-});
+          res.json(filtered);
+      });
+  });
+
+  
 
 app.listen(port, () => {
   console.log(`Server berjalan di http://localhost:${port}`);

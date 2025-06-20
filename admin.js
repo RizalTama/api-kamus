@@ -6,8 +6,10 @@ const { KMPSearch } = require('./kmp');
 const session = require('express-session');
 const authAdmin = require('./auth_admin');
 const app = express();
+const cors = require('cors')
 
 app.use(bodyParser.json());
+app.use(cors());
 
 // Session config
 app.use(session({
@@ -225,3 +227,4 @@ app.get('/search', (req, res) => {
 app.listen(port, () => {
   console.log(`Server berjalan di http://localhost:${port}`);
 });
+
